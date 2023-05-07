@@ -22,6 +22,10 @@ module.exports.submit = (event, context, callback) => {
     .then(res => {
       callback(null, {
         statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': '*',
+        },
         body: JSON.stringify({
           message: `Sucessfully submitted todo`,
           todoId: res.id
@@ -43,7 +47,7 @@ module.exports.submit = (event, context, callback) => {
 module.exports.list = (event, context, callback) => {
   var params = {
       TableName: process.env.TODO_TABLE,
-      ProjectionExpression: "id, todo"
+      ProjectionExpression: "id, todo, submittedAt"
   };
 
   console.log("Scanning Todo table.");
@@ -56,6 +60,10 @@ module.exports.list = (event, context, callback) => {
           console.log("Scan succeeded.");
           return callback(null, {
               statusCode: 200,
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*',
+              },
               body: JSON.stringify({
                   todos: data.Items
               })
@@ -80,6 +88,10 @@ module.exports.get = (event, context, callback) => {
     .then(result => {
       const response = {
         statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': '*',
+        },
         body: JSON.stringify(result.Item),
       };
       callback(null, response);
@@ -103,7 +115,14 @@ module.exports.delete = (event, context, callback) => {
     .then(result => {
       const response = {
         statusCode: 200,
-        body: JSON.stringify(result.Item),
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': '*',
+        },
+        body: JSON.stringify({
+          message: `Sucessfully deleted todo`,
+          todoId: result.id
+        })
       };
       callback(null, response);
     })
